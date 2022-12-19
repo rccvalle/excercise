@@ -19,7 +19,7 @@ public class App {
 		try {
 
 			// create the list from the archive
-			List<String> countryCodes = Arquive.readArchive("resources//coutryCodes.txt");
+			List<String> countryCodes = Arquive.readArchive("src//main//resources//coutryCodes.txt");
 			List<String> phoneNumbers = Arquive.readArchive(args[0]);
 
 			long qtdShortNumbersOfPortugal = phoneNumbers.stream()
@@ -96,9 +96,10 @@ public class App {
 
 		} catch (IOException e) {
 			System.out.println("Problems processing the file, please check and try again");
+			System.out.println("Name = " + e.getClass().getName() + " Message = " + e.getMessage());
 		} catch (Exception e) {
 			System.out.println("A problem occurred and the application needed to be terminated. Please send this message to support:");
 			System.out.println("Name = " + e.getClass().getName() + " Message = " + e.getMessage());
-		}
+		} 
 	}
 }
