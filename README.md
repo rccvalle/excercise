@@ -21,6 +21,7 @@ you should see output similar to this:
 to create the project we used maven (https://maven.apache.org/) which serves as a dependency manager and application build creation;
 
 as main features of the algorithm, the api stream was used, as well as some functional interfaces.
+(https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html)
 
 a basic unit test class was also created with JUnit that validates the existence of the files.
 
