@@ -19,17 +19,13 @@ public class App {
 		try {
 
 			// create the list from the archive
-			List<String> countryCodes = Arquive.readArchive("coutryCodes.txt");
+			List<String> countryCodes = Arquive.readArchive("resources//coutryCodes.txt");
 			List<String> phoneNumbers = Arquive.readArchive(args[0]);
-
-			System.out.println("\n#Count the shortNumbers of Portugal...");
 
 			long qtdShortNumbersOfPortugal = phoneNumbers.stream()
 					.filter(phoneNumber -> ShortNumber.isShortNumber.and(ShortNumber.isBeginWithZero)
 							.and(ShortNumber.isBlankSpace).and(ShortNumber.isOnlyNumbers).test(phoneNumber))
 					.count();
-
-			System.out.println("\n#Portugal(shortNumbers) = " + qtdShortNumbersOfPortugal);
 
 			Map<Integer, String> mapaCountryCodes = Country.mapCountryCodes.apply(countryCodes);
 
@@ -69,46 +65,40 @@ public class App {
 			phoneNumbers = phoneNumbers.stream().map(phoneNumber -> String.valueOf(phoneNumber.trim()))
 					.collect(Collectors.toList());
 
-			System.out.println("\n#Now the longNumbers...");
-
 			phoneNumbers = phoneNumbers
 					.stream().filter(phoneNumber -> LongNumber.startWithValidCaracter
 							.and(LongNumber.existsWhiteSpaceBetweenCharacterAndCountryCode).test(phoneNumber))
 					.collect(Collectors.toList());
 
-			phoneNumbers.forEach(System.out::println);
-
+			
 			phoneNumbers = phoneNumbers.stream().map(phoneNumber -> LongNumber.replaceCharacters.apply(phoneNumber))
-					.filter(phoneNumber -> LongNumber.isLongNumber.test(phoneNumber)).collect(Collectors.toList());
+					.filter(phoneNumber -> ShortNumber.isOnlyNumbers.and(LongNumber.isLongNumber).test(phoneNumber)).collect(Collectors.toList());
 
 			List<String> possiblesCountryCodes = phoneNumbers.stream().map(phoneNumber -> phoneNumber.substring(0, 3))
 					.collect(Collectors.toList());
 
-			System.out.println("\n#Now the possiblesCountryCodes.....");
-			possiblesCountryCodes.forEach(System.out::println);
+			Map<String, Integer> qtdPhoneNumbersPerCountry = getQtdPhoneNumberPerCounty.apply(possiblesCountryCodes);
 
-			Map ultimaParte = getQtdPhoneNumberPerCounty.apply(possiblesCountryCodes);
-
-			int qtdPortugal = 0;
-			if (ultimaParte.containsKey("Portugal")) {
-				qtdPortugal = (int) ultimaParte.get("Portugal");
+			int portugalCount = 0;
+			if (qtdPhoneNumbersPerCountry.containsKey("Portugal")) {
+				portugalCount = (int) qtdPhoneNumbersPerCountry.get("Portugal");
 			}
-			qtdPortugal += qtdShortNumbersOfPortugal;
+			portugalCount += qtdShortNumbersOfPortugal;
 
-			ultimaParte.put("Portugal", qtdPortugal);
+			qtdPhoneNumbersPerCountry.put("Portugal", portugalCount);
 
-			// ultimaParte.forEach((country,qtd) -> System.out.println(country + "=" +
-			// qtd));
-			System.out.println("\n#Saida Final.....");
-			ultimaParte.entrySet(). // get elements
-					stream(). // get elements
-					sorted( // sort elements by passsing outerComparator
+			System.out.println("#Response.....");
+			qtdPhoneNumbersPerCountry.entrySet(). 
+					stream().
+					sorted(
 							Map.Entry.<String, Integer>comparingByValue(outerComparator))
 					.forEach(System.out::println);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Problems processing the file, please check and try again");
+		} catch (Exception e) {
+			System.out.println("A problem occurred and the application needed to be terminated. Please send this message to support:");
+			System.out.println("Name = " + e.getClass().getName() + " Message = " + e.getMessage());
 		}
 	}
 }
